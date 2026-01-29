@@ -1,3 +1,34 @@
 {
-  "items": []
+  "items": [
+    {
+      "date": "2026-01-28",
+      "leader1": "Nuclear_Uranium",
+      "leader1_share": 0.1116604872246385,
+      "leader2": "Semis",
+      "leader2_share": 0.0823655135408092,
+      "leader3": "Space",
+      "leader3_share": 0.0695706092226178,
+      "ch2_1": "Quantum",
+      "ch2_1_share": 0.1053000711177129,
+      "ch2_2": "Metals",
+      "ch2_2_share": 0.102669988921523,
+      "ch2_3": "Genomics_Bio",
+      "ch2_3_share": 0.088326785368711,
+      "ch3_1": "Metals",
+      "ch3_1_share": 0.1154759913129704,
+      "ch3_2": "MegaCap_AI",
+      "ch3_2_share": 0.0847506451122705,
+      "ch3_3": "Genomics_Bio",
+      "ch3_3_share": 0.0814736394241196,
+      "s1": 0.2377584468803213,
+      "theta_v1": 0.0397648416626343,
+      "v_fr": 1.342978339150576,
+      "single_axis_score": 0.5902439024390244,
+      "tags": [
+        "daily",
+        "full",
+        "first"
+      ]
+    }
+  ]
 }
