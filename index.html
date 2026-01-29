@@ -15,7 +15,11 @@
     th { position: sticky; top: 0; background: #fff; }
     a { color: inherit; }
     .pill { display:inline-block; padding:2px 8px; border:1px solid #ddd; border-radius:999px; margin-right:6px; font-size:12px; color:#444; }
-    .kpi { font-variant-numeric: tabular-nums; }
+    details summary { cursor: pointer; list-style: none; }
+    details summary::-webkit-details-marker { display:none; }
+    .kpi { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .grid { display:grid; grid-template-columns: 1.2fr 1fr; gap:14px; margin-top:10px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 12px; }
   </style>
 </head>
 <body>
@@ -23,15 +27,22 @@
   <div class="muted">Daily structure brief generated from your Macro Theme Radar runs. Latest first.</div>
 
   <div class="row">
-    <input id="q" placeholder="Search (leader / challenger / tag / date)" size="34"/>
+    <input id="q" placeholder="Search (leader / challenger / tag / regime / date)" size="42"/>
     <select id="sort">
       <option value="date_desc">Sort: date (newest)</option>
+      <option value="vfrpct_desc">Sort: vfr_pct (high→low)</option>
       <option value="vfr_desc">Sort: v_FR (high→low)</option>
-      <option value="s1_desc">Sort: s1 (high→low)</option>
       <option value="score_desc">Sort: score (high→low)</option>
+      <option value="s1_desc">Sort: s1 (high→low)</option>
     </select>
     <select id="tag">
       <option value="">Filter: tag (all)</option>
+    </select>
+    <select id="regime">
+      <option value="">Filter: regime (all)</option>
+      <option value="structure_rewrite">structure_rewrite</option>
+      <option value="single_axis_squeeze">single_axis_squeeze</option>
+      <option value="theme_migration">theme_migration</option>
     </select>
   </div>
 
@@ -39,9 +50,8 @@
     <thead>
       <tr>
         <th>Date</th>
-        <th>Leaders (v1)</th>
-        <th>Challengers (v2 / v3)</th>
-        <th class="kpi">Risk line (W=63)</th>
+        <th>Summary</th>
+        <th class="kpi">Percentiles</th>
         <th>Tags</th>
       </tr>
     </thead>
@@ -51,8 +61,7 @@
 <script>
 async function loadIndex(){
   const res = await fetch('logs/index.json', {cache:'no-store'});
-  const idx = await res.json();
-  return idx;
+  return await res.json();
 }
 
 function uniq(arr){ return [...new Set(arr)].sort(); }
@@ -67,69 +76,104 @@ function renderTagOptions(items){
   }
 }
 
-function formatRisk(x){
-  const s1 = (x.s1 ?? '').toString();
-  const th = (x.theta_v1 ?? '').toString();
-  const vfr = (x.v_fr ?? '').toString();
-  const sc = (x.single_axis_score ?? '').toString();
-  return `s1=${s1} θ=${th} v_FR=${vfr} score=${sc}`;
+function short(x, n=3){
+  if (x === null || x === undefined) return "";
+  const v = Number(x);
+  if (Number.isNaN(v)) return String(x);
+  return v.toFixed(n);
+}
+function pct(x){
+  if (x === null || x === undefined) return "";
+  const v = Number(x);
+  if (Number.isNaN(v)) return "";
+  return v.toFixed(2);
+}
+function pill(text){
+  return `<span class="pill">${text}</span>`;
 }
 
-function rowMatches(x, q, tag){
+function rowMatches(x, q, tag, regime){
   const hay = [
-    x.date, x.leader1, x.leader2, x.leader3,
+    x.date, x.regime,
+    x.leader1, x.leader2, x.leader3,
     x.ch2_1, x.ch2_2, x.ch2_3, x.ch3_1, x.ch3_2, x.ch3_3,
+    x.watchlist, x.hedge_note,
     ...(x.tags||[])
   ].join(' ').toLowerCase();
   if (tag && !(x.tags||[]).includes(tag)) return false;
+  if (regime && x.regime !== regime) return false;
   if (!q) return true;
   return hay.includes(q.toLowerCase());
 }
 
 function sortItems(items, mode){
   const copy = items.slice();
+  const num = (v)=> (v===null||v===undefined||v===""? -1 : Number(v));
   if (mode === 'date_desc') copy.sort((a,b)=> (a.date<b.date?1:-1));
-  if (mode === 'vfr_desc') copy.sort((a,b)=> (Number(b.v_fr||-1)-Number(a.v_fr||-1)));
-  if (mode === 's1_desc') copy.sort((a,b)=> (Number(b.s1||-1)-Number(a.s1||-1)));
-  if (mode === 'score_desc') copy.sort((a,b)=> (Number(b.single_axis_score||-1)-Number(a.single_axis_score||-1)));
+  if (mode === 'vfrpct_desc') copy.sort((a,b)=> (num(b.vfr_pct)-num(a.vfr_pct)));
+  if (mode === 'vfr_desc') copy.sort((a,b)=> (num(b.v_fr)-num(a.v_fr)));
+  if (mode === 'score_desc') copy.sort((a,b)=> (num(b.single_axis_score)-num(a.single_axis_score)));
+  if (mode === 's1_desc') copy.sort((a,b)=> (num(b.s1)-num(a.s1)));
   return copy;
 }
 
 function render(items){
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = '';
+
   for (const x of items){
     const tr = document.createElement('tr');
 
     const tdDate = document.createElement('td');
-    const a = document.createElement('a');
-    a.href = `logs/${x.date}.md`;
-    a.textContent = x.date;
-    tdDate.appendChild(a);
+    tdDate.innerHTML = `<a href="logs/${x.date}.md" style="font-weight:600; text-decoration:none;">${x.date}</a><div class="muted" style="margin-top:4px;">${x.regime||""}</div>`;
 
-    const tdL = document.createElement('td');
-    tdL.innerHTML = `<b>${x.leader1}</b> (${x.leader1_share})<br/>${x.leader2} (${x.leader2_share})<br/>${x.leader3} (${x.leader3_share})`;
+    const tdSum = document.createElement('td');
+    const leaders = `${x.leader1} · ${x.leader2} · ${x.leader3}`;
+    const ch = `v2: ${x.ch2_1} | v3: ${x.ch3_1}`;
+    tdSum.innerHTML = `
+      <details>
+        <summary>
+          <div><b>v1</b> ${leaders}</div>
+          <div class="muted" style="margin-top:2px;">${ch}</div>
+          <div class="muted" style="margin-top:6px;">${x.watchlist||""}</div>
+        </summary>
 
-    const tdC = document.createElement('td');
-    tdC.innerHTML = `<div><b>v2</b>: ${x.ch2_1} (${x.ch2_1_share}), ${x.ch2_2} (${x.ch2_2_share}), ${x.ch2_3} (${x.ch2_3_share})</div>
-                     <div><b>v3</b>: ${x.ch3_1} (${x.ch3_1_share}), ${x.ch3_2} (${x.ch3_2_share}), ${x.ch3_3} (${x.ch3_3_share})</div>`;
+        <div class="grid">
+          <div>
+            <div><b>Leaders (v1)</b>: ${x.leader1} (${short(x.leader1_share)}), ${x.leader2} (${short(x.leader2_share)}), ${x.leader3} (${short(x.leader3_share)})</div>
+            <div style="margin-top:8px;"><b>Challengers</b>:
+              v2 ${x.ch2_1} (${short(x.ch2_1_share)}), ${x.ch2_2} (${short(x.ch2_2_share)}), ${x.ch2_3} (${short(x.ch2_3_share)})<br/>
+              v3 ${x.ch3_1} (${short(x.ch3_1_share)}), ${x.ch3_2} (${short(x.ch3_2_share)}), ${x.ch3_3} (${short(x.ch3_3_share)})
+            </div>
+            <div style="margin-top:8px;"><b>Hedge note</b>: ${x.hedge_note||""}</div>
+            <div style="margin-top:8px;"><b>Risk line</b>: s1=${short(x.s1)} θ=${short(x.theta_v1)} v_FR=${short(x.v_fr)} score=${short(x.single_axis_score)}</div>
+            ${x.bundle_root_sha256 ? `<div style="margin-top:8px;"><b>Bundle</b>: <span class="mono">${x.bundle_root_sha256}</span></div>` : ``}
+          </div>
+          <div>
+            <a href="assets/diagnostic/${x.date}_W63.png" target="_blank" class="muted">Open diagnostic W63</a><br/>
+            <img src="assets/diagnostic/${x.date}_W63.png" style="width:100%; max-height:220px; object-fit:contain; border:1px solid #eee; border-radius:10px; margin-top:6px;"
+                 onerror="this.style.display='none'"/>
+          </div>
+        </div>
+      </details>
+    `;
 
-    const tdR = document.createElement('td');
-    tdR.className = 'kpi';
-    tdR.textContent = formatRisk(x);
+    const tdPct = document.createElement('td');
+    tdPct.className = "kpi";
+    tdPct.innerHTML = `
+      ${pill("vfr_pct " + pct(x.vfr_pct))}
+      ${pill("theta_pct " + pct(x.theta_pct))}
+      ${pill("s1_pct " + pct(x.s1_pct))}
+      ${pill("score_pct " + pct(x.score_pct))}
+    `;
 
-    const tdT = document.createElement('td');
-    (x.tags||[]).forEach(t=>{
-      const span = document.createElement('span');
-      span.className='pill'; span.textContent=t;
-      tdT.appendChild(span);
-    });
+    const tdTags = document.createElement('td');
+    tdTags.innerHTML = (x.tags||[]).map(t=>pill(t)).join('');
 
     tr.appendChild(tdDate);
-    tr.appendChild(tdL);
-    tr.appendChild(tdC);
-    tr.appendChild(tdR);
-    tr.appendChild(tdT);
+    tr.appendChild(tdSum);
+    tr.appendChild(tdPct);
+    tr.appendChild(tdTags);
     tbody.appendChild(tr);
   }
 }
@@ -142,9 +186,10 @@ function render(items){
   const q = document.getElementById('q');
   const sortSel = document.getElementById('sort');
   const tagSel = document.getElementById('tag');
+  const regSel = document.getElementById('regime');
 
   function update(){
-    const filtered = items.filter(x=> rowMatches(x, q.value, tagSel.value));
+    const filtered = items.filter(x=> rowMatches(x, q.value, tagSel.value, regSel.value));
     const sorted = sortItems(filtered, sortSel.value);
     render(sorted);
   }
@@ -152,6 +197,7 @@ function render(items){
   q.addEventListener('input', update);
   sortSel.addEventListener('change', update);
   tagSel.addEventListener('change', update);
+  regSel.addEventListener('change', update);
 
   update();
 })();

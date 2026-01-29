@@ -1,71 +1,115 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-publish_today.py
-================
-Creates/updates:
-- logs/YYYY-MM-DD.md
-- logs/index.json
-- assets/diagnostic/YYYY-MM-DD_W63.png (optional copy)
-- assets/diagnostic/YYYY-MM-DD_W252.png (optional copy)
+publish_today_with_interpretation_v5.py
+=======================================
 
-Input:
---run_dir  outputs/theme_radar_full_YYYYMMDD_HHMMSS  (or any v3 output folder)
+Adds to index.json:
+watchlist, hedge_note, regime,
+vfr_pct / theta_pct / s1_pct / score_pct (percentiles within W=63 history),
+bundle_root_sha256.
 
-What it extracts:
-- leaders_W63.csv latest row
-- challengers_W63.csv latest k=2 and k=3 rows
-- migration_W63.csv latest: top risers/fallers (topn)
-- metrics_timeseries.csv latest W=63 risk line: s1,theta_v1,v_fr,score
-- diagnostic_W63.png and diagnostic_W252.png if present
+This is intended as a drop-in replacement for scripts/publish_today.py.
 
-Usage:
-python scripts/publish_today.py --run_dir outputs/theme_radar_full_YYYYMMDD_HHMMSS --topn 10 --tags "daily,full"
+Run from repo root:
+  python scripts/publish_today.py --run_dir <RUN_DIR> --topn 10 --tags "daily,full"
 """
+
 from __future__ import annotations
 import argparse, json, shutil
 from pathlib import Path
 import pandas as pd
+
 
 def read_csv(path: Path) -> pd.DataFrame:
     if not path.exists():
         raise FileNotFoundError(f"Missing: {path}")
     return pd.read_csv(path, parse_dates=["date"])
 
+
+def percentile_of_last(series: pd.Series) -> float:
+    s = series.dropna()
+    if len(s) < 5:
+        return float("nan")
+    last = s.iloc[-1]
+    return float((s <= last).mean())
+
+
+def classify_regime(vfr_p: float, s1_p: float, score_p: float) -> str:
+    if pd.notna(vfr_p) and vfr_p >= 0.90:
+        return "structure_rewrite"
+    if pd.notna(s1_p) and pd.notna(score_p) and s1_p >= 0.90 and score_p >= 0.90:
+        return "single_axis_squeeze"
+    return "theme_migration"
+
+
+def compute_bundle_root_sha256(root: Path, dstr: str) -> str | None:
+    import hashlib
+
+    def sha256_file(p: Path) -> str:
+        h = hashlib.sha256()
+        with p.open("rb") as f:
+            for chunk in iter(lambda: f.read(1024 * 1024), b""):
+                h.update(chunk)
+        return h.hexdigest()
+
+    md = root / "logs" / f"{dstr}.md"
+    w63 = root / "assets" / "diagnostic" / f"{dstr}_W63.png"
+    w252 = root / "assets" / "diagnostic" / f"{dstr}_W252.png"
+
+    parts = []
+    for p in (md, w63, w252):
+        if p.exists():
+            parts.append(sha256_file(p))
+    if not parts:
+        return None
+
+    H = hashlib.sha256()
+    for h in parts:
+        H.update(bytes.fromhex(h))
+    return H.hexdigest()
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--run_dir", type=str, required=True)
     p.add_argument("--topn", type=int, default=10)
-    p.add_argument("--tags", type=str, default="", help="Comma-separated tags, e.g. daily,full")
+    p.add_argument("--tags", type=str, default="", help="Comma-separated tags")
     args = p.parse_args()
 
     run_dir = Path(args.run_dir)
-    repo = run_dir.resolve()
-    # assume scripts/ is inside repo root; run_dir is relative to repo root
-    # We find repo root by walking up until logs/ exists.
     root = Path.cwd()
-    if not (root / "logs").exists():
-        # try parent of run_dir if user ran inside outputs/
-        root = run_dir.parent.parent if (run_dir.parent.parent / "logs").exists() else Path.cwd()
 
-    leaders = read_csv(run_dir / "leaders_W63.csv").sort_values("date")
-    latest_date = leaders["date"].iloc[-1]
+    # W=63 extraction
+    leaders63 = read_csv(run_dir / "leaders_W63.csv").sort_values("date")
+    latest_date = leaders63["date"].iloc[-1]
     dstr = str(latest_date.date())
+    L63 = leaders63.tail(1).iloc[0]
 
-    chall = read_csv(run_dir / "challengers_W63.csv").sort_values(["date","k"])
-    ch2 = chall[(chall["date"]==latest_date) & (chall["k"]==2)].tail(1)
-    ch3 = chall[(chall["date"]==latest_date) & (chall["k"]==3)].tail(1)
+    chall63 = read_csv(run_dir / "challengers_W63.csv").sort_values(["date", "k"])
+    ch2_63 = chall63[(chall63["date"] == latest_date) & (chall63["k"] == 2)].tail(1)
+    ch3_63 = chall63[(chall63["date"] == latest_date) & (chall63["k"] == 3)].tail(1)
 
-    mig = read_csv(run_dir / "migration_W63.csv").sort_values("date")
-    mig_last = mig[mig["date"]==latest_date]
-    if len(mig_last)==0:
-        mig_last = mig.tail(1)
+    mig63 = read_csv(run_dir / "migration_W63.csv").sort_values("date")
+    mig_last = mig63[mig63["date"] == latest_date]
+    if len(mig_last) == 0:
+        mig_last = mig63.tail(1)
     slopes = mig_last.drop(columns=["date"]).iloc[0].sort_values(ascending=False)
     top_risers = slopes.head(args.topn)
     top_fallers = slopes.tail(args.topn)
 
-    metrics = pd.read_csv(run_dir / "metrics_timeseries.csv", parse_dates=["date"]).sort_values(["date","W"])
-    m63 = metrics[metrics["W"]==63].tail(1).iloc[0]
+    metrics = pd.read_csv(run_dir / "metrics_timeseries.csv", parse_dates=["date"]).sort_values(["date", "W"])
+    m63 = metrics[metrics["W"] == 63].copy()
+    if len(m63) == 0:
+        raise RuntimeError("No W=63 rows in metrics_timeseries.csv")
+    last63 = m63.tail(1).iloc[0]
+
+    vfr_pct = percentile_of_last(m63["v_fr"])
+    s1_pct = percentile_of_last(m63["s1"])
+    score_pct = percentile_of_last(m63["single_axis_score"])
+    theta_pct = percentile_of_last(m63["theta_v1"])
+
+    regime = classify_regime(vfr_pct, s1_pct, score_pct)
 
     # Copy diagnostics if exist
     diag_dir = root / "assets" / "diagnostic"
@@ -75,7 +119,18 @@ def main():
         if src.exists():
             shutil.copyfile(src, diag_dir / f"{dstr}_W{W}.png")
 
-    # Build markdown
+    # Actionable one-liners
+    v2_top1 = str(ch2_63.iloc[0]["ch1"]) if len(ch2_63) else ""
+    watch_risers = [k.replace("axis_", "") for k in top_risers.index[:5]]
+    watchlist = f"Tomorrow watchlist: {', '.join(watch_risers)}" + (f" + v2_top1={v2_top1}" if v2_top1 else "")
+
+    hedge_note = "Hedge note: normal correlation stability."
+    if pd.notna(vfr_pct) and vfr_pct >= 0.90 and pd.notna(theta_pct) and theta_pct >= 0.75:
+        hedge_note = "Hedge note: v_FR high + theta high → correlation structure unstable; diversify hedges / reduce reliance on static correlations."
+    elif pd.notna(vfr_pct) and vfr_pct >= 0.90:
+        hedge_note = "Hedge note: v_FR high → structure is re-writing; treat correlation assumptions as fragile."
+
+    # Markdown build
     md = []
     md.append(f"# Theme Radar Daily Brief — {dstr}")
     md.append("")
@@ -83,39 +138,52 @@ def main():
         md.append(f"![diagnostic W63](../assets/diagnostic/{dstr}_W63.png)")
         md.append("")
     md.append("## Leaders (v1) — W=63")
-    last_leader = leaders.tail(1).iloc[0]
-    md.append(f"- **{last_leader['leader1']}** ({last_leader['leader1_share']})")
-    md.append(f"- {last_leader['leader2']} ({last_leader['leader2_share']})")
-    md.append(f"- {last_leader['leader3']} ({last_leader['leader3_share']})")
+    md.append(f"- **{L63['leader1']}** ({L63['leader1_share']})")
+    md.append(f"- {L63['leader2']} ({L63['leader2_share']})")
+    md.append(f"- {L63['leader3']} ({L63['leader3_share']})")
     md.append("")
     md.append("## Challengers — W=63")
-    if len(ch2):
-        r = ch2.iloc[0]
+    if len(ch2_63):
+        r = ch2_63.iloc[0]
         md.append(f"**v2:** {r['ch1']} ({r['ch1_share']}), {r['ch2']} ({r['ch2_share']}), {r['ch3']} ({r['ch3_share']})")
-    if len(ch3):
-        r = ch3.iloc[0]
+    if len(ch3_63):
+        r = ch3_63.iloc[0]
         md.append(f"**v3:** {r['ch1']} ({r['ch1_share']}), {r['ch2']} ({r['ch2_share']}), {r['ch3']} ({r['ch3_share']})")
     md.append("")
     md.append("## Migration (20D slope) — W=63")
     md.append("**Top risers:**")
-    for k,v in top_risers.items():
+    for k, v in top_risers.items():
         md.append(f"- {k}: {v}")
     md.append("")
     md.append("**Top fallers:**")
-    for k,v in top_fallers.items():
+    for k, v in top_fallers.items():
         md.append(f"- {k}: {v}")
     md.append("")
     md.append("## Risk line (W=63)")
-    md.append(f"- s1: {m63['s1']}")
-    md.append(f"- theta_v1: {m63['theta_v1']}")
-    md.append(f"- v_FR: {m63['v_fr']}")
-    md.append(f"- single_axis_score: {m63['single_axis_score']}")
+    md.append(f"- s1: {last63['s1']}")
+    md.append(f"- theta_v1: {last63['theta_v1']}")
+    md.append(f"- v_FR: {last63['v_fr']}")
+    md.append(f"- single_axis_score: {last63['single_axis_score']}")
+    md.append("")
+    md.append("## Interpretation")
+    md.append(f"**Regime:** `{regime}`")
+    md.append("")
+    md.append(f"- Action: {watchlist}")
+    md.append(f"- Action: {hedge_note}")
+    md.append("")
+    md.append(f"- Percentiles (W=63 history): vfr_pct={vfr_pct:.2f}, theta_pct={theta_pct:.2f}, s1_pct={s1_pct:.2f}, score_pct={score_pct:.2f}.")
     md.append("")
 
     log_path = root / "logs" / f"{dstr}.md"
     log_path.write_text("\n".join(md), encoding="utf-8")
 
-    # Update index.json
+    bundle = compute_bundle_root_sha256(root, dstr)
+    if bundle:
+        with log_path.open("a", encoding="utf-8") as f:
+            f.write("\n---\n")
+            f.write(f"**BUNDLE_ROOT_SHA256:** `{bundle}`\n")
+
+    # index.json update
     idx_path = root / "logs" / "index.json"
     idx = {"items": []}
     if idx_path.exists():
@@ -123,35 +191,41 @@ def main():
     items = idx.get("items", [])
 
     tags = [t.strip() for t in args.tags.split(",") if t.strip()]
-    # Build record
+    if regime not in tags:
+        tags.append(regime)
+
     rec = {
         "date": dstr,
-        "leader1": str(last_leader["leader1"]),
-        "leader1_share": float(last_leader["leader1_share"]),
-        "leader2": str(last_leader["leader2"]),
-        "leader2_share": float(last_leader["leader2_share"]),
-        "leader3": str(last_leader["leader3"]),
-        "leader3_share": float(last_leader["leader3_share"]),
-        "ch2_1": str(ch2.iloc[0]["ch1"]) if len(ch2) else "",
-        "ch2_1_share": float(ch2.iloc[0]["ch1_share"]) if len(ch2) else None,
-        "ch2_2": str(ch2.iloc[0]["ch2"]) if len(ch2) else "",
-        "ch2_2_share": float(ch2.iloc[0]["ch2_share"]) if len(ch2) else None,
-        "ch2_3": str(ch2.iloc[0]["ch3"]) if len(ch2) else "",
-        "ch2_3_share": float(ch2.iloc[0]["ch3_share"]) if len(ch2) else None,
-        "ch3_1": str(ch3.iloc[0]["ch1"]) if len(ch3) else "",
-        "ch3_1_share": float(ch3.iloc[0]["ch1_share"]) if len(ch3) else None,
-        "ch3_2": str(ch3.iloc[0]["ch2"]) if len(ch3) else "",
-        "ch3_2_share": float(ch3.iloc[0]["ch2_share"]) if len(ch3) else None,
-        "ch3_3": str(ch3.iloc[0]["ch3"]) if len(ch3) else "",
-        "ch3_3_share": float(ch3.iloc[0]["ch3_share"]) if len(ch3) else None,
-        "s1": float(m63["s1"]),
-        "theta_v1": float(m63["theta_v1"]),
-        "v_fr": float(m63["v_fr"]),
-        "single_axis_score": float(m63["single_axis_score"]),
+        "leader1": str(L63["leader1"]), "leader1_share": float(L63["leader1_share"]),
+        "leader2": str(L63["leader2"]), "leader2_share": float(L63["leader2_share"]),
+        "leader3": str(L63["leader3"]), "leader3_share": float(L63["leader3_share"]),
+        "ch2_1": str(ch2_63.iloc[0]["ch1"]) if len(ch2_63) else "",
+        "ch2_1_share": float(ch2_63.iloc[0]["ch1_share"]) if len(ch2_63) else None,
+        "ch2_2": str(ch2_63.iloc[0]["ch2"]) if len(ch2_63) else "",
+        "ch2_2_share": float(ch2_63.iloc[0]["ch2_share"]) if len(ch2_63) else None,
+        "ch2_3": str(ch2_63.iloc[0]["ch3"]) if len(ch2_63) else "",
+        "ch2_3_share": float(ch2_63.iloc[0]["ch3_share"]) if len(ch2_63) else None,
+        "ch3_1": str(ch3_63.iloc[0]["ch1"]) if len(ch3_63) else "",
+        "ch3_1_share": float(ch3_63.iloc[0]["ch1_share"]) if len(ch3_63) else None,
+        "ch3_2": str(ch3_63.iloc[0]["ch2"]) if len(ch3_63) else "",
+        "ch3_2_share": float(ch3_63.iloc[0]["ch2_share"]) if len(ch3_63) else None,
+        "ch3_3": str(ch3_63.iloc[0]["ch3"]) if len(ch3_63) else "",
+        "ch3_3_share": float(ch3_63.iloc[0]["ch3_share"]) if len(ch3_63) else None,
+        "s1": float(last63["s1"]),
+        "theta_v1": float(last63["theta_v1"]),
+        "v_fr": float(last63["v_fr"]),
+        "single_axis_score": float(last63["single_axis_score"]),
+        "watchlist": watchlist,
+        "hedge_note": hedge_note,
+        "regime": regime,
+        "vfr_pct": float(vfr_pct) if pd.notna(vfr_pct) else None,
+        "theta_pct": float(theta_pct) if pd.notna(theta_pct) else None,
+        "s1_pct": float(s1_pct) if pd.notna(s1_pct) else None,
+        "score_pct": float(score_pct) if pd.notna(score_pct) else None,
+        "bundle_root_sha256": bundle,
         "tags": tags
     }
 
-    # replace or insert
     items = [x for x in items if x.get("date") != dstr]
     items.append(rec)
     items.sort(key=lambda x: x["date"])
@@ -161,6 +235,9 @@ def main():
     print("Wrote:", log_path)
     print("Updated:", idx_path)
     print("Copied diagnostics to:", diag_dir)
+    if bundle:
+        print("BUNDLE_ROOT_SHA256:", bundle)
+
 
 if __name__ == "__main__":
     main()
