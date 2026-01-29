@@ -1,3 +1,0 @@
-Dropped due to insufficient coverage (min_coverage=0.60):
-AVGO
-GRID
