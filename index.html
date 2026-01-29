@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Theme Radar Log</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; line-height: 1.35; }
+    h1 { margin: 0 0 8px; }
+    .muted { color: #666; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin: 12px 0 18px; }
+    input, select { padding: 8px 10px; font-size: 14px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border-bottom: 1px solid #eee; padding: 10px 8px; text-align: left; font-size: 14px; vertical-align: top; }
+    th { position: sticky; top: 0; background: #fff; }
+    a { color: inherit; }
+    .pill { display:inline-block; padding:2px 8px; border:1px solid #ddd; border-radius:999px; margin-right:6px; font-size:12px; color:#444; }
+    .kpi { font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body>
+  <h1>Theme Radar Log</h1>
+  <div class="muted">Daily structure brief generated from your Macro Theme Radar runs. Latest first.</div>
+
+  <div class="row">
+    <input id="q" placeholder="Search (leader / challenger / tag / date)" size="34"/>
+    <select id="sort">
+      <option value="date_desc">Sort: date (newest)</option>
+      <option value="vfr_desc">Sort: v_FR (high→low)</option>
+      <option value="s1_desc">Sort: s1 (high→low)</option>
+      <option value="score_desc">Sort: score (high→low)</option>
+    </select>
+    <select id="tag">
+      <option value="">Filter: tag (all)</option>
+    </select>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Leaders (v1)</th>
+        <th>Challengers (v2 / v3)</th>
+        <th class="kpi">Risk line (W=63)</th>
+        <th>Tags</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+
+<script>
+async function loadIndex(){
+  const res = await fetch('logs/index.json', {cache:'no-store'});
+  const idx = await res.json();
+  return idx;
+}
+
+function uniq(arr){ return [...new Set(arr)].sort(); }
+
+function renderTagOptions(items){
+  const tagSel = document.getElementById('tag');
+  const tags = uniq(items.flatMap(x => x.tags || []));
+  for (const t of tags){
+    const opt = document.createElement('option');
+    opt.value = t; opt.textContent = t;
+    tagSel.appendChild(opt);
+  }
+}
+
+function formatRisk(x){
+  const s1 = (x.s1 ?? '').toString();
+  const th = (x.theta_v1 ?? '').toString();
+  const vfr = (x.v_fr ?? '').toString();
+  const sc = (x.single_axis_score ?? '').toString();
+  return `s1=${s1} θ=${th} v_FR=${vfr} score=${sc}`;
+}
+
+function rowMatches(x, q, tag){
+  const hay = [
+    x.date, x.leader1, x.leader2, x.leader3,
+    x.ch2_1, x.ch2_2, x.ch2_3, x.ch3_1, x.ch3_2, x.ch3_3,
+    ...(x.tags||[])
+  ].join(' ').toLowerCase();
+  if (tag && !(x.tags||[]).includes(tag)) return false;
+  if (!q) return true;
+  return hay.includes(q.toLowerCase());
+}
+
+function sortItems(items, mode){
+  const copy = items.slice();
+  if (mode === 'date_desc') copy.sort((a,b)=> (a.date<b.date?1:-1));
+  if (mode === 'vfr_desc') copy.sort((a,b)=> (Number(b.v_fr||-1)-Number(a.v_fr||-1)));
+  if (mode === 's1_desc') copy.sort((a,b)=> (Number(b.s1||-1)-Number(a.s1||-1)));
+  if (mode === 'score_desc') copy.sort((a,b)=> (Number(b.single_axis_score||-1)-Number(a.single_axis_score||-1)));
+  return copy;
+}
+
+function render(items){
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = '';
+  for (const x of items){
+    const tr = document.createElement('tr');
+
+    const tdDate = document.createElement('td');
+    const a = document.createElement('a');
+    a.href = `logs/${x.date}.md`;
+    a.textContent = x.date;
+    tdDate.appendChild(a);
+
+    const tdL = document.createElement('td');
+    tdL.innerHTML = `<b>${x.leader1}</b> (${x.leader1_share})<br/>${x.leader2} (${x.leader2_share})<br/>${x.leader3} (${x.leader3_share})`;
+
+    const tdC = document.createElement('td');
+    tdC.innerHTML = `<div><b>v2</b>: ${x.ch2_1} (${x.ch2_1_share}), ${x.ch2_2} (${x.ch2_2_share}), ${x.ch2_3} (${x.ch2_3_share})</div>
+                     <div><b>v3</b>: ${x.ch3_1} (${x.ch3_1_share}), ${x.ch3_2} (${x.ch3_2_share}), ${x.ch3_3} (${x.ch3_3_share})</div>`;
+
+    const tdR = document.createElement('td');
+    tdR.className = 'kpi';
+    tdR.textContent = formatRisk(x);
+
+    const tdT = document.createElement('td');
+    (x.tags||[]).forEach(t=>{
+      const span = document.createElement('span');
+      span.className='pill'; span.textContent=t;
+      tdT.appendChild(span);
+    });
+
+    tr.appendChild(tdDate);
+    tr.appendChild(tdL);
+    tr.appendChild(tdC);
+    tr.appendChild(tdR);
+    tr.appendChild(tdT);
+    tbody.appendChild(tr);
+  }
+}
+
+(async ()=>{
+  const idx = await loadIndex();
+  const items = idx.items || [];
+  renderTagOptions(items);
+
+  const q = document.getElementById('q');
+  const sortSel = document.getElementById('sort');
+  const tagSel = document.getElementById('tag');
+
+  function update(){
+    const filtered = items.filter(x=> rowMatches(x, q.value, tagSel.value));
+    const sorted = sortItems(filtered, sortSel.value);
+    render(sorted);
+  }
+
+  q.addEventListener('input', update);
+  sortSel.addEventListener('change', update);
+  tagSel.addEventListener('change', update);
+
+  update();
+})();
+</script>
+</body>
+</html>
