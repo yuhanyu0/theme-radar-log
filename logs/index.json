@@ -3373,6 +3373,44 @@
         "full",
         "theme_migration"
       ]
+    },
+    {
+      "date": "2026-05-04",
+      "leader1": "Nuclear_Uranium",
+      "leader1_share": 0.0741102980978086,
+      "leader2": "Semis",
+      "leader2_share": 0.0615468596490288,
+      "leader3": "Genomics_Bio",
+      "leader3_share": 0.0527315104822291,
+      "ch2_1": "Software_Cloud",
+      "ch2_1_share": 0.124492248305153,
+      "ch2_2": "Cyber",
+      "ch2_2_share": 0.0812271691030496,
+      "ch2_3": "Grid_Power",
+      "ch2_3_share": 0.0712776356885084,
+      "ch3_1": "Rates",
+      "ch3_1_share": 0.1732490272036763,
+      "ch3_2": "Nuclear_Uranium",
+      "ch3_2_share": 0.0983405531354195,
+      "ch3_3": "Credit",
+      "ch3_3_share": 0.0537274073652725,
+      "s1": 0.5000253724401628,
+      "theta_v1": 0.0004187371700011,
+      "v_fr": 134.02971436510052,
+      "single_axis_score": 0.6891509433962264,
+      "watchlist": "Tomorrow watchlist: Rates, Metals, DataCenter_Infra, Crypto, Commodities + v2_top1=Software_Cloud",
+      "hedge_note": "Hedge note: normal correlation stability.",
+      "regime": "theme_migration",
+      "vfr_pct": 0.04728132387706856,
+      "theta_pct": 0.14893617021276595,
+      "s1_pct": 0.8372641509433962,
+      "score_pct": 0.8278301886792453,
+      "bundle_root_sha256": "c3232692ae596e67abedf33e5b0ca8edec67bec75a7428eb1ea711336c9c84ac",
+      "tags": [
+        "daily",
+        "full",
+        "theme_migration"
+      ]
     }
   ]
 }
