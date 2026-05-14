@@ -3753,6 +3753,44 @@
         "full",
         "theme_migration"
       ]
+    },
+    {
+      "date": "2026-05-14",
+      "leader1": "Nuclear_Uranium",
+      "leader1_share": 0.0734637981421197,
+      "leader2": "Semis",
+      "leader2_share": 0.0613660557870622,
+      "leader3": "Genomics_Bio",
+      "leader3_share": 0.0520218804851286,
+      "ch2_1": "Software_Cloud",
+      "ch2_1_share": 0.1302339847542116,
+      "ch2_2": "Cyber",
+      "ch2_2_share": 0.0836394640521662,
+      "ch2_3": "Grid_Power",
+      "ch2_3_share": 0.0751022790964413,
+      "ch3_1": "Nuclear_Uranium",
+      "ch3_1_share": 0.1121101135591088,
+      "ch3_2": "Rates",
+      "ch3_2_share": 0.0978095167374707,
+      "ch3_3": "Space",
+      "ch3_3_share": 0.068854547434711,
+      "s1": 0.4930318163440486,
+      "theta_v1": 0.0086515252120992,
+      "v_fr": 176.1014630474034,
+      "single_axis_score": 0.6631336405529955,
+      "watchlist": "Tomorrow watchlist: Rates, Drones_Autonomy, Metals, Quantum, Defense + v2_top1=Software_Cloud",
+      "hedge_note": "Hedge note: normal correlation stability.",
+      "regime": "theme_migration",
+      "vfr_pct": 0.3510392609699769,
+      "theta_pct": 0.3163972286374134,
+      "s1_pct": 0.8110599078341014,
+      "score_pct": 0.7811059907834101,
+      "bundle_root_sha256": "f2d86a58294c96c40a805592e13355bb03191dc5e8c36e83f2c2441dd92fe656",
+      "tags": [
+        "daily",
+        "full",
+        "theme_migration"
+      ]
     }
   ]
 }
