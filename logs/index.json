@@ -4285,6 +4285,44 @@
         "full",
         "theme_migration"
       ]
+    },
+    {
+      "date": "2026-05-29",
+      "leader1": "Nuclear_Uranium",
+      "leader1_share": 0.0795478605990227,
+      "leader2": "Semis",
+      "leader2_share": 0.0634480371751949,
+      "leader3": "Genomics_Bio",
+      "leader3_share": 0.056429902052268,
+      "ch2_1": "Software_Cloud",
+      "ch2_1_share": 0.134117027285224,
+      "ch2_2": "Cyber",
+      "ch2_2_share": 0.0851775577860522,
+      "ch2_3": "Crypto",
+      "ch2_3_share": 0.065774694145759,
+      "ch3_1": "Rates",
+      "ch3_1_share": 0.1167331680532646,
+      "ch3_2": "Nuclear_Uranium",
+      "ch3_2_share": 0.091746757164216,
+      "ch3_3": "Space",
+      "ch3_3_share": 0.0696160966324931,
+      "s1": 0.4526692608928447,
+      "theta_v1": 0.0329330734518501,
+      "v_fr": 190.29064539496952,
+      "single_axis_score": 0.6155902004454342,
+      "watchlist": "Tomorrow watchlist: Nuclear_Uranium, Sector_Energy, Grid_Power, Semis, Genomics_Bio + v2_top1=Software_Cloud",
+      "hedge_note": "Hedge note: v_FR high → structure is re-writing; treat correlation assumptions as fragile.",
+      "regime": "structure_rewrite",
+      "vfr_pct": 0.9575892857142857,
+      "theta_pct": 0.7075892857142857,
+      "s1_pct": 0.7037861915367484,
+      "score_pct": 0.6859688195991092,
+      "bundle_root_sha256": "1eef32db2a6713f82dea5806947c68bcf60f848a0daddfee9c8f70ca6f5a7714",
+      "tags": [
+        "daily",
+        "full",
+        "structure_rewrite"
+      ]
     }
   ]
 }
