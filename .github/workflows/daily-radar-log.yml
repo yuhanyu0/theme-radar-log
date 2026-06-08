@@ -1,0 +1,111 @@
+name: Daily Theme Radar Log
+
+on:
+  schedule:
+    # 12:15 PM America/New_York during daylight saving time.
+    - cron: "15 16 * * *"
+    # 12:15 PM America/New_York during standard time.
+    - cron: "15 17 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: daily-theme-radar-log
+  cancel-in-progress: false
+
+env:
+  RADAR_SCRIPT: scripts/macro_theme_radar_v3_full.py
+  RADAR_CORR: sample
+  RADAR_WINDOWS: "126,63"
+  RADAR_MIN_COVERAGE: "0.60"
+  RADAR_TOP_N: "10"
+  RADAR_TAGS: daily,full
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Keep scheduled runs near noon Eastern
+        id: time_gate
+        shell: pwsh
+        run: |
+          $run = "true"
+          if ("${{ github.event_name }}" -eq "schedule") {
+            $tz = [System.TimeZoneInfo]::FindSystemTimeZoneById("Eastern Standard Time")
+            $now = [System.TimeZoneInfo]::ConvertTimeFromUtc([DateTime]::UtcNow, $tz)
+            "local_time=$($now.ToString('yyyy-MM-dd HH:mm:ss zzz'))" >> $env:GITHUB_OUTPUT
+            if ($now.Hour -ne 12) {
+              $run = "false"
+            }
+          }
+          "run=$run" >> $env:GITHUB_OUTPUT
+
+      - name: Checkout
+        if: steps.time_gate.outputs.run == 'true'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        if: steps.time_gate.outputs.run == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        if: steps.time_gate.outputs.run == 'true'
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          if (Test-Path requirements.txt) {
+            python -m pip install -r requirements.txt
+          }
+
+      - name: Configure git author
+        if: steps.time_gate.outputs.run == 'true'
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Run radar and publish log
+        if: steps.time_gate.outputs.run == 'true'
+        shell: pwsh
+        run: |
+          if (-not (Test-Path $env:RADAR_SCRIPT)) {
+            throw "Missing radar script '$env:RADAR_SCRIPT'. Commit the generator script there or update RADAR_SCRIPT in this workflow."
+          }
+
+          $outDir = Join-Path $env:RUNNER_TEMP "theme-radar-outputs"
+          .\daily_run_and_publish.ps1 `
+            -PythonExe "python" `
+            -RadarScript $env:RADAR_SCRIPT `
+            -Corr $env:RADAR_CORR `
+            -Windows $env:RADAR_WINDOWS `
+            -MinCoverage ([double]$env:RADAR_MIN_COVERAGE) `
+            -TopN ([int]$env:RADAR_TOP_N) `
+            -Tags $env:RADAR_TAGS `
+            -OutDir $outDir
+
+      - name: Set up Pages
+        if: steps.time_gate.outputs.run == 'true'
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        if: steps.time_gate.outputs.run == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        if: steps.time_gate.outputs.run == 'true'
+        id: deployment
+        uses: actions/deploy-pages@v4
