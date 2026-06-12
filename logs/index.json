@@ -4655,11 +4655,11 @@
       "watchlist": "Tomorrow watchlist: Rates, Metals, Critical_Minerals, Space, Nuclear_Uranium + v2_top1=Software_Cloud",
       "hedge_note": "Hedge note: normal correlation stability.",
       "regime": "theme_migration",
-      "vfr_pct": 0.8939393939393939,
+      "vfr_pct": 0.8896103896103896,
       "theta_pct": 0.6904761904761905,
       "s1_pct": 0.7386609071274298,
       "score_pct": 0.7213822894168467,
-      "bundle_root_sha256": "f9026862ebb78702a0bcc760ec643d4a0d253544499ba00831cfdc388660dad9",
+      "bundle_root_sha256": "9e531f00bf866346f98afbdb26ddabd1b95cc320c17db911879646035a44b681",
       "tags": [
         "daily",
         "full",
