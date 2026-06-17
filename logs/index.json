@@ -4845,11 +4845,11 @@
       "watchlist": "Tomorrow watchlist: Rates, Crypto, Cyber, Drones_Autonomy, Space + v2_top1=Software_Cloud",
       "hedge_note": "Hedge note: normal correlation stability.",
       "regime": "theme_migration",
-      "vfr_pct": 0.39186295503211993,
+      "vfr_pct": 0.3854389721627409,
       "theta_pct": 0.4989293361884368,
       "s1_pct": 0.717948717948718,
       "score_pct": 0.6858974358974359,
-      "bundle_root_sha256": "49194659609e4f4b26b43f023e53b99f494ea17bee47ce0393a118cbaa95ed43",
+      "bundle_root_sha256": "98e45df20ad1306f7533bf5b86e7fb62f0b0bedf44adc2a30d76a6403c2b01ec",
       "tags": [
         "daily",
         "full",
