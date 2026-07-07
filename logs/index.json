@@ -5567,11 +5567,11 @@
       "watchlist": "Tomorrow watchlist: Semis, Sector_ConsStap, Critical_Minerals, Clean_Broad, Grid_Power + v2_top1=Semis",
       "hedge_note": "Hedge note: normal correlation stability.",
       "regime": "theme_migration",
-      "vfr_pct": 0.5318275154004107,
+      "vfr_pct": 0.5770020533880903,
       "theta_pct": 0.48459958932238195,
       "s1_pct": 0.5266393442622951,
       "score_pct": 0.4979508196721312,
-      "bundle_root_sha256": "96e8ffb185e3d9f8896228134dda5f38c65dbe4a2c71ade8b4258359e128dfba",
+      "bundle_root_sha256": "8802571dd2e885815078f4a0a209f1cbcfc0e39073c68d3949e236451b729741",
       "tags": [
         "daily",
         "full",
