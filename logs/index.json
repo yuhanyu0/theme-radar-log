@@ -5881,6 +5881,44 @@
         "full",
         "theme_migration"
       ]
+    },
+    {
+      "date": "2026-07-17",
+      "leader1": "Nuclear_Uranium",
+      "leader1_share": 0.0845606844383758,
+      "leader2": "Semis",
+      "leader2_share": 0.0647325576508287,
+      "leader3": "Grid_Power",
+      "leader3_share": 0.0520509323950288,
+      "ch2_1": "Semis",
+      "ch2_1_share": 0.0945067989055317,
+      "ch2_2": "MegaCap_AI",
+      "ch2_2_share": 0.0729912104277754,
+      "ch2_3": "Grid_Power",
+      "ch2_3_share": 0.0611953594565236,
+      "ch3_1": "Software_Cloud",
+      "ch3_1_share": 0.1147231322008842,
+      "ch3_2": "MegaCap_AI",
+      "ch3_2_share": 0.069245684357618,
+      "ch3_3": "Cyber",
+      "ch3_3_share": 0.067180172179647,
+      "s1": 0.4319750119588113,
+      "theta_v1": 0.0270108348361069,
+      "v_fr": 181.67260217035167,
+      "single_axis_score": 0.5875502008032129,
+      "watchlist": "Tomorrow watchlist: Cyber, Software_Cloud, Sector_ConsStap, Clean_Broad, Nuclear_Uranium + v2_top1=Semis",
+      "hedge_note": "Hedge note: normal correlation stability.",
+      "regime": "theme_migration",
+      "vfr_pct": 0.5553319919517102,
+      "theta_pct": 0.6197183098591549,
+      "s1_pct": 0.6104417670682731,
+      "score_pct": 0.6385542168674698,
+      "bundle_root_sha256": "1337b01222e12f8df30b2cfd0028208329ddb61dc62fb9b18d072a65393f88b1",
+      "tags": [
+        "daily",
+        "full",
+        "theme_migration"
+      ]
     }
   ]
 }
