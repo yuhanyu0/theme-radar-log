@@ -6299,6 +6299,44 @@
         "full",
         "theme_migration"
       ]
+    },
+    {
+      "date": "2026-07-31",
+      "leader1": "Nuclear_Uranium",
+      "leader1_share": 0.1955223565995688,
+      "leader2": "Equity_ExUS",
+      "leader2_share": 0.1061061779637193,
+      "leader3": "Metals",
+      "leader3_share": 0.0949987172993083,
+      "ch2_1": "Sector_Fin",
+      "ch2_1_share": 0.10593510200463,
+      "ch2_2": "Grid_Power",
+      "ch2_2_share": 0.0983196519219951,
+      "ch2_3": "Sector_Comm",
+      "ch2_3_share": 0.0939467309501836,
+      "ch3_1": "Grid_Power",
+      "ch3_1_share": 0.1075949334436596,
+      "ch3_2": "Nuclear_Uranium",
+      "ch3_2_share": 0.0988645158762396,
+      "ch3_3": "Sector_Ind",
+      "ch3_3_share": 0.0910267318579572,
+      "s1": 0.4284114881653872,
+      "theta_v1": 0.0772869579180955,
+      "v_fr": 3.1603562677508603,
+      "single_axis_score": 0.563671875,
+      "watchlist": "Tomorrow watchlist: Space, Nuclear_Uranium, Sector_Utilities, Clean_Solar, Grid_Power + v2_top1=Sector_Fin",
+      "hedge_note": "Hedge note: v_FR high + theta high → correlation structure unstable; diversify hedges / reduce reliance on static correlations.",
+      "regime": "structure_rewrite",
+      "vfr_pct": 0.9980430528375733,
+      "theta_pct": 0.949119373776908,
+      "s1_pct": 0.517578125,
+      "score_pct": 0.59765625,
+      "bundle_root_sha256": "42bbb5469bfefd2b13a644856b0c29fcb115927625d5dbc45ad14f21cef6a8dd",
+      "tags": [
+        "daily",
+        "full",
+        "structure_rewrite"
+      ]
     }
   ]
 }
