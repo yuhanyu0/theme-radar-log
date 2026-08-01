@@ -6365,11 +6365,11 @@
       "watchlist": "Tomorrow watchlist: Quantum, Crypto, Semis, Sector_RealEstate, Space + v2_top1=Semis",
       "hedge_note": "Hedge note: normal correlation stability.",
       "regime": "theme_migration",
-      "vfr_pct": 0.66015625,
+      "vfr_pct": 0.65625,
       "theta_pct": 0.630859375,
       "s1_pct": 0.5321637426900585,
       "score_pct": 0.621832358674464,
-      "bundle_root_sha256": "04f27c09d717641dfd5379f9c3e8039dc979914cca670e96a296ba7f3bf41bed",
+      "bundle_root_sha256": "aa11a57a059f76d5bf6c7620d6a55a6090d712a7d9cf21baf5988a715a9af8f1",
       "tags": [
         "daily",
         "full",
