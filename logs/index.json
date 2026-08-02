@@ -6403,11 +6403,11 @@
       "watchlist": "Tomorrow watchlist: Quantum, Crypto, Semis, Space, Nuclear_Uranium + v2_top1=Semis",
       "hedge_note": "Hedge note: normal correlation stability.",
       "regime": "theme_migration",
-      "vfr_pct": 0.08966861598440545,
+      "vfr_pct": 0.09941520467836257,
       "theta_pct": 0.08771929824561403,
       "s1_pct": 0.5291828793774319,
       "score_pct": 0.6108949416342413,
-      "bundle_root_sha256": "e10b26695d1c11da8479b905de8baf9b718e732ae9e9382df68cc411f2e27a4b",
+      "bundle_root_sha256": "9aa281e9988c69d3abb429f26c73c66c4c35b67944c9f2f528c0d73c7e003ea8",
       "tags": [
         "daily",
         "full",
