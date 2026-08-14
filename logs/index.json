@@ -6831,6 +6831,44 @@
         "full",
         "theme_migration"
       ]
+    },
+    {
+      "date": "2026-08-14",
+      "leader1": "Nuclear_Uranium",
+      "leader1_share": 0.0907645378377532,
+      "leader2": "Semis",
+      "leader2_share": 0.0753262956000631,
+      "leader3": "Quantum",
+      "leader3_share": 0.0649253775557116,
+      "ch2_1": "Rates",
+      "ch2_1_share": 0.0845995405685314,
+      "ch2_2": "Software_Cloud",
+      "ch2_2_share": 0.0798082060045817,
+      "ch2_3": "Semis",
+      "ch2_3_share": 0.0772698339115411,
+      "ch3_1": "Metals",
+      "ch3_1_share": 0.107679937102874,
+      "ch3_2": "DataCenter_Infra",
+      "ch3_2_share": 0.0723327533656262,
+      "ch3_3": "Crypto",
+      "ch3_3_share": 0.0722710238373272,
+      "s1": 0.3729336591889026,
+      "theta_v1": 0.0647766488637919,
+      "v_fr": 189.41049392592265,
+      "single_axis_score": 0.3973384030418251,
+      "watchlist": "Tomorrow watchlist: Commodities, Semis, Quantum, Grid_Power, DataCenter_Infra + v2_top1=Rates",
+      "hedge_note": "Hedge note: v_FR high + theta high → correlation structure unstable; diversify hedges / reduce reliance on static correlations.",
+      "regime": "structure_rewrite",
+      "vfr_pct": 0.9523809523809523,
+      "theta_pct": 0.9238095238095239,
+      "s1_pct": 0.33269961977186313,
+      "score_pct": 0.34220532319391633,
+      "bundle_root_sha256": "5ef8d6561fdcb65ca0272d10a76e57fcf537996127430c6a16d4f16e34339c6e",
+      "tags": [
+        "daily",
+        "full",
+        "structure_rewrite"
+      ]
     }
   ]
 }
