@@ -8151,11 +8151,11 @@
       "watchlist": "Tomorrow watchlist: DataCenter_Infra, Genomics_Bio, MegaCap_AI, Space, Sector_Fin + v2_top1=Rates",
       "hedge_note": "Hedge note: normal correlation stability.",
       "regime": "theme_migration",
-      "vfr_pct": 0.42245989304812837,
+      "vfr_pct": 0.4206773618538324,
       "theta_pct": 0.44206773618538325,
       "s1_pct": 0.37544483985765126,
       "score_pct": 0.398576512455516,
-      "bundle_root_sha256": "7f0d99e3b2e89ba37cf3f4f1970d9a9d8da2776d3cb5c56d9a2a0bb93ba3f092",
+      "bundle_root_sha256": "73fe2bc79f4ef2227186a5e24fcac4f2392225c1be8b8411abe311a263991064",
       "tags": [
         "daily",
         "full",
