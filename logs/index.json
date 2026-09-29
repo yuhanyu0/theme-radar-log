@@ -8493,11 +8493,11 @@
       "watchlist": "Tomorrow watchlist: Rates, DataCenter_Infra, Sector_Utilities, Commodities, Credit + v2_top1=Genomics_Bio",
       "hedge_note": "Hedge note: normal correlation stability.",
       "regime": "theme_migration",
-      "vfr_pct": 0.5884413309982487,
+      "vfr_pct": 0.5709281961471103,
       "theta_pct": 0.5183887915936952,
       "s1_pct": 0.5681818181818182,
       "score_pct": 0.5716783216783217,
-      "bundle_root_sha256": "6de0fad657021cd5e8e355557b86c10bf6d6950b646d4dfb6570c39d9ee4071d",
+      "bundle_root_sha256": "854ebd5418d4c59305bf66c4e1b425b3ea47a2293cc568e25a79ce4138c9cbd0",
       "tags": [
         "daily",
         "full",
