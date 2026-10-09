@@ -8731,6 +8731,44 @@
         "full",
         "theme_migration"
       ]
+    },
+    {
+      "date": "2026-10-09",
+      "leader1": "Nuclear_Uranium",
+      "leader1_share": 0.0784969842385276,
+      "leader2": "Semis",
+      "leader2_share": 0.0619183199318185,
+      "leader3": "Space",
+      "leader3_share": 0.0586828231329837,
+      "ch2_1": "Semis",
+      "ch2_1_share": 0.0959505742183783,
+      "ch2_2": "Genomics_Bio",
+      "ch2_2_share": 0.0827239117082041,
+      "ch2_3": "Grid_Power",
+      "ch2_3_share": 0.0726011836645735,
+      "ch3_1": "Software_Cloud",
+      "ch3_1_share": 0.1125642264529548,
+      "ch3_2": "Cyber",
+      "ch3_2_share": 0.0821215175799291,
+      "ch3_3": "Space",
+      "ch3_3_share": 0.0669721056810515,
+      "s1": 0.3714101517826574,
+      "theta_v1": 0.0313817972179959,
+      "v_fr": 181.77341893173465,
+      "single_axis_score": 0.3432989690721649,
+      "watchlist": "Tomorrow watchlist: Rates, DataCenter_Infra, Sector_RealEstate, Sector_Utilities, Sector_ConsDisc + v2_top1=Semis",
+      "hedge_note": "Hedge note: normal correlation stability.",
+      "regime": "theme_migration",
+      "vfr_pct": 0.5697074010327022,
+      "theta_pct": 0.6901893287435457,
+      "s1_pct": 0.3075601374570447,
+      "score_pct": 0.22508591065292097,
+      "bundle_root_sha256": "bb7c482d0d48d4e09094bc9656f6c65e52a754475f65c59ea47c7958518fd59d",
+      "tags": [
+        "daily",
+        "full",
+        "theme_migration"
+      ]
     }
   ]
 }
