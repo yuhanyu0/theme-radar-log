@@ -9491,6 +9491,44 @@
         "full",
         "theme_migration"
       ]
+    },
+    {
+      "date": "2026-11-04",
+      "leader1": "Nuclear_Uranium",
+      "leader1_share": 0.083854751459368,
+      "leader2": "Semis",
+      "leader2_share": 0.0748047128210526,
+      "leader3": "Space",
+      "leader3_share": 0.0602178679731698,
+      "ch2_1": "Rates",
+      "ch2_1_share": 0.1329715485926507,
+      "ch2_2": "Semis",
+      "ch2_2_share": 0.0713429783331667,
+      "ch2_3": "Credit",
+      "ch2_3_share": 0.0500634655805745,
+      "ch3_1": "Software_Cloud",
+      "ch3_1_share": 0.1018108401421888,
+      "ch3_2": "Grid_Power",
+      "ch3_2_share": 0.0786174814954072,
+      "ch3_3": "Genomics_Bio",
+      "ch3_3_share": 0.0725049898124123,
+      "s1": 0.4053292691709562,
+      "theta_v1": 0.0410956840908091,
+      "v_fr": 180.8524399967299,
+      "single_axis_score": 0.5088815789473684,
+      "watchlist": "Tomorrow watchlist: Semis, MegaCap_AI, Grid_Power, Crypto, Sector_ConsStap + v2_top1=Rates",
+      "hedge_note": "Hedge note: normal correlation stability.",
+      "regime": "theme_migration",
+      "vfr_pct": 0.5255354200988468,
+      "theta_pct": 0.800658978583196,
+      "s1_pct": 0.4769736842105263,
+      "score_pct": 0.48355263157894735,
+      "bundle_root_sha256": "fc310fb7481ff047b7db22bde7e036e0f8a03474517bc10e069843cb6fa6586a",
+      "tags": [
+        "daily",
+        "full",
+        "theme_migration"
+      ]
     }
   ]
 }
