@@ -9519,11 +9519,11 @@
       "watchlist": "Tomorrow watchlist: Semis, MegaCap_AI, Grid_Power, Crypto, Sector_ConsStap + v2_top1=Rates",
       "hedge_note": "Hedge note: normal correlation stability.",
       "regime": "theme_migration",
-      "vfr_pct": 0.5255354200988468,
+      "vfr_pct": 0.5172981878088962,
       "theta_pct": 0.800658978583196,
       "s1_pct": 0.4769736842105263,
       "score_pct": 0.48355263157894735,
-      "bundle_root_sha256": "fc310fb7481ff047b7db22bde7e036e0f8a03474517bc10e069843cb6fa6586a",
+      "bundle_root_sha256": "af81c7addc850d7579f6f421201f05f570b4d51762d11a148b506d20f8d5c8d8",
       "tags": [
         "daily",
         "full",
