@@ -9671,11 +9671,11 @@
       "watchlist": "Tomorrow watchlist: Semis, Genomics_Bio, Crypto, Software_Cloud, MegaCap_AI + v2_top1=Rates",
       "hedge_note": "Hedge note: normal correlation stability.",
       "regime": "theme_migration",
-      "vfr_pct": 0.10784313725490197,
+      "vfr_pct": 0.09967320261437909,
       "theta_pct": 0.27941176470588236,
       "s1_pct": 0.6427406199021207,
       "score_pct": 0.6949429037520392,
-      "bundle_root_sha256": "692175828a72d788b716f7d9d16fa46bd3d587e2f6f8d12900784f11f40f91bc",
+      "bundle_root_sha256": "b6147f10180be131af5c89ad5428f9f0b3f820d3f4bda16f94f4de715964e655",
       "tags": [
         "daily",
         "full",
