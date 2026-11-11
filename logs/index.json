@@ -9747,11 +9747,11 @@
       "watchlist": "Tomorrow watchlist: Genomics_Bio, Semis, Software_Cloud, Cyber, Nuclear_Uranium + v2_top1=Rates",
       "hedge_note": "Hedge note: normal correlation stability.",
       "regime": "theme_migration",
-      "vfr_pct": 0.6237785016286646,
+      "vfr_pct": 0.6107491856677525,
       "theta_pct": 0.5814332247557004,
       "s1_pct": 0.7430894308943089,
       "score_pct": 0.7658536585365854,
-      "bundle_root_sha256": "ec8fc75c04c548899ae5cf35523903209da1b9c4e20ccbd5dcdddc80b446a40e",
+      "bundle_root_sha256": "6cfb42bed373e47a3f8ea90be5027e74e281d0e6808869167a71d216b73e3b78",
       "tags": [
         "daily",
         "full",
