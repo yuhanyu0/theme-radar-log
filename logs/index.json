@@ -10099,6 +10099,44 @@
         "full",
         "theme_migration"
       ]
+    },
+    {
+      "date": "2026-11-25",
+      "leader1": "Nuclear_Uranium",
+      "leader1_share": 0.0796284317766432,
+      "leader2": "Semis",
+      "leader2_share": 0.0701436494348002,
+      "leader3": "Space",
+      "leader3_share": 0.0553258724786933,
+      "ch2_1": "Rates",
+      "ch2_1_share": 0.1023133108462663,
+      "ch2_2": "Metals",
+      "ch2_2_share": 0.0704257410708367,
+      "ch2_3": "Semis",
+      "ch2_3_share": 0.0612038862887897,
+      "ch3_1": "Rates",
+      "ch3_1_share": 0.1176868434925506,
+      "ch3_2": "MegaCap_AI",
+      "ch3_2_share": 0.0915619693301572,
+      "ch3_3": "Nuclear_Uranium",
+      "ch3_3_share": 0.0856461994365321,
+      "s1": 0.5207510420725386,
+      "theta_v1": 0.0201248543740548,
+      "v_fr": 175.72428444040332,
+      "single_axis_score": 0.7453100158982513,
+      "watchlist": "Tomorrow watchlist: Rates, Drones_Autonomy, Software_Cloud, Metals, Sector_Comm + v2_top1=Rates",
+      "hedge_note": "Hedge note: normal correlation stability.",
+      "regime": "theme_migration",
+      "vfr_pct": 0.34554140127388533,
+      "theta_pct": 0.4984076433121019,
+      "s1_pct": 0.890302066772655,
+      "score_pct": 0.8887122416534181,
+      "bundle_root_sha256": "f0411b9a26830542579972296119589f2cfc138f530afe4d8e9130d69bad6127",
+      "tags": [
+        "daily",
+        "full",
+        "theme_migration"
+      ]
     }
   ]
 }
